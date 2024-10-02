@@ -1,7 +1,8 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "C/C++: gcc build and debug active file",
+            "name": "C/C++: clang build and debug active file",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
@@ -11,8 +12,7 @@
             "environment": [{ "name": "TERM", "value": "xterm-256color" }],
             "externalConsole": true,
             "MIMode": "lldb",
-            "preLaunchTask": "C/C++: gcc build active file"
+            "preLaunchTask": "C/C++: clang build active file"
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
