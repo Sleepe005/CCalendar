@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <locale.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
 
 // Globals variables
 int cursePos = 0;
 int maxCursePos = 8;
+
+char strTime1[8];
+bool hasStrTime1 = false;
 
 // Function for printing menu
 void printMenu(){
@@ -22,6 +29,9 @@ void printMenu(){
 
     for(int i = 0; i < 9; ++i){
         printw("%s", menu[i]);
+        if(hasStrTime1 && i == 0){
+            printw(": %s", strTime1);
+        }
         if (i == cursePos){
             printw("  %s", "<--");
         }
@@ -29,6 +39,52 @@ void printMenu(){
     }
 }
 
+// Parse time in string format to array
+int *timeStrParser(char strData[8]){ // 23:59:27
+    static int valueTime[3] = {0,0,0};
+    char substr[4];
+
+    for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
+        strncpy(substr, strData+i, 2);
+        valueTime[j] = atoi(substr);
+    }
+
+    return valueTime;
+}
+
+int *dataStrParser(char strData[8]){ // 01.01.2020
+    static int valueData[3] = {0,0,0};
+    char substr[4];
+
+    for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
+        if(j == 2){
+            strncpy(substr, strData+i, 4);
+        }else{
+            strncpy(substr, strData+i, 2);
+        }
+        valueData[j] = atoi(substr);
+    }
+
+    return valueData;
+}
+
+// it could have been universal parser but i am stupid :(
+// int Parser(char strData[10]){
+//     static int resValues[3] = {0,0,0};
+//     char substr[4] = "";
+
+//     for(int i = 0, j = 0; i < strlen(strData), j < 3; i++){
+//         if(isdigit(strData[i])){
+//             strcpy(substr, strData[i]);
+//         }else{
+//             resValues[j] = atoi(substr);
+//             strcpy(substr, "");
+//             j++;
+//         }
+//     }
+// }
+
+// Get value from data arrya
 int GetYear(char strData[10]);
 
 int GetMonth(char strData[10]);
@@ -36,7 +92,7 @@ int GetMonth(char strData[10]);
 int GetDay(char strData[10]);
 
 bool visokosYear(char strData[10]){
-    // int year;
+    // int year = GetYear();
     // if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0){
     //     return true;
     // }
@@ -67,10 +123,26 @@ int valDayInMonth(char strData[10]){
     // }
 }
 
-int dataCoder(char strData[10]){
+int totalDays(char strData[10]){
     int totalDays = 0;
 
     return totalDays;
+}
+
+void doSomething(int doing){
+    switch (doing)
+    {
+    case 0:
+        clear();
+        printw("Введите первое время: ");
+        scanw("%s", &strTime1);
+        // TODO: Ввод
+        hasStrTime1 = true;
+        break;
+    
+    default:
+        break;
+    }
 }
 
 int main(){
@@ -106,6 +178,12 @@ int main(){
                 getch();
                 break;
             }
+        }else if(key == 10){
+            doSomething(cursePos);
+        }else if(key == 49){
+            cursePos = 0;
+            doSomething(cursePos);
+            int *testData = timeStrParser(strTime1);
         }
 
         clear();

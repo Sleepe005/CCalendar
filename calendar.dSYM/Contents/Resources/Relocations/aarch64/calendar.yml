@@ -2,9 +2,17 @@
 triple:          'arm64-apple-darwin'
 binary-path:     '/Users/kholo/Documents/Programming/university/C/Calendar/CCalendar/calendar'
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _printMenu, symObjAddr: 0x0, symBinAddr: 0x1000039F4, symSize: 0x108 }
-  - { offsetInCU: 0x3F, offset: 0x3F, size: 0x8, addend: 0x0, symName: _cursePos, symObjAddr: 0xC44, symBinAddr: 0x100008004, symSize: 0x0 }
-  - { offsetInCU: 0x5B, offset: 0x5B, size: 0x8, addend: 0x0, symName: _maxCursePos, symObjAddr: 0x29C, symBinAddr: 0x100008000, symSize: 0x0 }
-  - { offsetInCU: 0x72, offset: 0x72, size: 0x8, addend: 0x0, symName: _printMenu, symObjAddr: 0x0, symBinAddr: 0x1000039F4, symSize: 0x108 }
-  - { offsetInCU: 0xB2, offset: 0xB2, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x108, symBinAddr: 0x100003AFC, symSize: 0x194 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _printMenu, symObjAddr: 0x0, symBinAddr: 0x100003760, symSize: 0x14C }
+  - { offsetInCU: 0x3F, offset: 0x3F, size: 0x8, addend: 0x0, symName: _cursePos, symObjAddr: 0x13FC, symBinAddr: 0x100008004, symSize: 0x0 }
+  - { offsetInCU: 0x5B, offset: 0x5B, size: 0x8, addend: 0x0, symName: _maxCursePos, symObjAddr: 0x4C4, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x70, offset: 0x70, size: 0x8, addend: 0x0, symName: _hasStrTime1, symObjAddr: 0x1400, symBinAddr: 0x100008008, symSize: 0x0 }
+  - { offsetInCU: 0x9A, offset: 0x9A, size: 0x8, addend: 0x0, symName: _timeStrParser, symObjAddr: 0x14C, symBinAddr: 0x1000038AC, symSize: 0xA4 }
+  - { offsetInCU: 0xBF, offset: 0xBF, size: 0x8, addend: 0x0, symName: _timeStrParser.valueTime, symObjAddr: 0x1404, symBinAddr: 0x100008014, symSize: 0x0 }
+  - { offsetInCU: 0x127, offset: 0x127, size: 0x8, addend: 0x0, symName: _strTime1, symBinAddr: 0x100008009, symSize: 0x0 }
+  - { offsetInCU: 0x13C, offset: 0x13C, size: 0x8, addend: 0x0, symName: _printMenu, symObjAddr: 0x0, symBinAddr: 0x100003760, symSize: 0x14C }
+  - { offsetInCU: 0x17C, offset: 0x17C, size: 0x8, addend: 0x0, symName: _visokosYear, symObjAddr: 0x1F0, symBinAddr: 0x100003950, symSize: 0x18 }
+  - { offsetInCU: 0x1A4, offset: 0x1A4, size: 0x8, addend: 0x0, symName: _valDayInMonth, symObjAddr: 0x208, symBinAddr: 0x100003968, symSize: 0x30 }
+  - { offsetInCU: 0x1DA, offset: 0x1DA, size: 0x8, addend: 0x0, symName: _totalDays, symObjAddr: 0x238, symBinAddr: 0x100003998, symSize: 0x18 }
+  - { offsetInCU: 0x210, offset: 0x210, size: 0x8, addend: 0x0, symName: _doSomething, symObjAddr: 0x250, symBinAddr: 0x1000039B0, symSize: 0x7C }
+  - { offsetInCU: 0x234, offset: 0x234, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x2CC, symBinAddr: 0x100003A2C, symSize: 0x1F8 }
 ...
