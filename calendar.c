@@ -5,13 +5,33 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
 // Globals variables
 int cursePos = 0;
 int maxCursePos = 8;
 
+// Воод 1-ого времени
 char strTime1[8];
 bool hasStrTime1 = false;
+
+// Ввод 1-ой даты
+char strDate1[10];
+bool hasStrDate1 = false;
+
+// Ввод второго времени
+char strTime2[8];
+bool hasStrTime2 = false;
+
+// Ввод второй даты
+char strDate2[10];
+bool hasStrDate2 = false;
+
+// Ввод кол-ва дней
+char addDays[5];
+bool hasAddDays = false;
+
+// Ввод времени
+char addTime[8];
+bool hasAddTime = false;
 
 int startDate[3] = {1,1,1930};
 
@@ -33,6 +53,21 @@ void printMenu(){
         printw("%s", menu[i]);
         if(hasStrTime1 && i == 0){
             printw(": %s", strTime1);
+        }
+        if(hasStrDate1 && i == 1){
+            printw(": %s", strDate1);
+        }
+        if(hasStrTime2 && i == 2){
+            printw(": %s", strTime2);
+        }
+        if(hasStrDate2 && i == 3){
+            printw(": %s", strDate2);
+        }
+        if(hasAddDays && i == 5){
+            printw(": %s", addDays);
+        }
+        if(hasAddTime && i == 7){
+            printw(": %s", addTime);
         }
         if (i == cursePos){
             printw("  %s", "<--");
@@ -75,7 +110,6 @@ int *dateStrParser(char strData[10]){ // 01.01.2020
 // int Parser(char strData[10]){
 //     static int resValues[3] = {0,0,0};
 //     char substr[4] = "";
-
 //     for(int i = 0, j = 0; i < strlen(strData), j < 3; i++){
 //         if(isdigit(strData[i])){
 //             strcpy(substr, strData[i]);
@@ -168,6 +202,46 @@ void doSomething(int doing){
         hasStrTime1 = true;
         break;
     
+    case 1:
+        clear();
+        printw("Введите первую дату время: ");
+        scanw("%s", &strDate1);
+        // TODO: Ввод
+        hasStrDate1 = true;
+        break;
+    
+    case 2:
+        clear();
+        printw("Введите второе время: ");
+        scanw("%s", &strTime2);
+        // TODO: Ввод
+        hasStrTime2 = true;
+        break;
+    
+    case 3:
+        clear();
+        printw("Введите вторую дату: ");
+        scanw("%s", &strDate2);
+        // TODO: Ввод
+        hasStrDate2 = true;
+        break;
+
+    case 5:
+        clear();
+        printw("Введите кол-во дней: ");
+        scanw("%s", &addDays);
+        // TODO: Ввод
+        hasAddDays = true;
+        break;
+    
+    case 7:
+        clear();
+        printw("Введите время: ");
+        scanw("%s", &addTime);
+        // TODO: Ввод
+        hasAddTime = true;
+        break;
+
     default:
         break;
     }
@@ -212,6 +286,27 @@ int main(){
             cursePos = 0;
             doSomething(cursePos);
             // int *testData = timeStrParser(strTime1);
+        }else if(key == 50){
+            cursePos = 1;
+            doSomething(cursePos);
+        }else if(key == 51){
+            cursePos = 2;
+            doSomething(cursePos);
+        }else if(key == 52){
+            cursePos = 3;
+            doSomething(cursePos);
+        }else if(key == 53){
+            cursePos = 4;
+        }else if(key == 54){
+            cursePos = 5;
+            doSomething(cursePos);
+        }else if(key == 55){
+            cursePos = 6;
+        }else if(key == 56){
+            cursePos = 7;
+            doSomething(cursePos);
+        }else if(key == 57){
+            cursePos = 8;
         }
 
         clear();
