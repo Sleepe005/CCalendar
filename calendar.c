@@ -13,6 +13,8 @@ int maxCursePos = 8;
 char strTime1[8];
 bool hasStrTime1 = false;
 
+int startDate[3] = {1,1,1930};
+
 // Function for printing menu
 void printMenu(){
     char menu[9][75] = {
@@ -52,7 +54,8 @@ int *timeStrParser(char strData[8]){ // 23:59:27
     return valueTime;
 }
 
-int *dataStrParser(char strData[8]){ // 01.01.2020
+// Parse date in string format to array
+int *dateStrParser(char strData[10]){ // 01.01.2020
     static int valueData[3] = {0,0,0};
     char substr[4];
 
@@ -85,46 +88,71 @@ int *dataStrParser(char strData[8]){ // 01.01.2020
 // }
 
 // Get value from data arrya
-int GetYear(char strData[10]);
+// int GetYear(char strData[10]);
+// int GetMonth(char strData[10]);
+// int GetDay(char strData[10]);
 
-int GetMonth(char strData[10]);
+bool visokosYear(int year){
+    // int *date = dateStrParser(strDate);
+    // int year =date[0];
+    
+    bool res;
 
-int GetDay(char strData[10]);
+    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0){
+        res = true;
+    }
+    else{
+        res = false;
+    }
 
-bool visokosYear(char strData[10]){
-    // int year = GetYear();
-    // if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0){
-    //     return true;
-    // }
-    // else{
-    //     return false;
-    // }
+    return res;
 }
 
-int valDayInMonth(char strData[10]){
-    bool vis = visokosYear(strData);
+int valDayInMonth(int year, int month){
+    // int *date = dateStrParser(strDate);
+    bool vis = visokosYear(year);
+    // int month = date[1];
 
-    // if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
-    // {
-    //     return 31
-    // }
-    // else{
-    //     if (month == 2){
-    //         if (vis){
-    //             return 29
-    //         }
-    //         else{
-    //             return 28
-    //         }
-    //     }
-    //     else{
-    //         return 30
-    //     }
-    // }
+    int res;
+
+    if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+    {
+        res = 31;
+    }
+    else{
+        if (month == 2){
+            if (vis){
+                res = 29;
+            }
+            else{
+                res = 28;
+            }
+        }
+        else{
+            res = 30;
+        }
+    }
+
+    return res;
 }
 
 int totalDays(char strData[10]){
     int totalDays = 0;
+    int *date = dateStrParser(strData);
+
+    for(int i = startDate[2]; i < date[2]; ++i){
+        if(visokosYear(i)){
+            totalDays += 366;
+        }else{
+            totalDays += 365;
+        }
+    }
+
+    for(int i = 1; i < date[1]; ++i){
+        totalDays += valDayInMonth(date[2], i);
+    }
+
+    totalDays += date[0] - 1;
 
     return totalDays;
 }
@@ -183,7 +211,7 @@ int main(){
         }else if(key == 49){
             cursePos = 0;
             doSomething(cursePos);
-            int *testData = timeStrParser(strTime1);
+            // int *testData = timeStrParser(strTime1);
         }
 
         clear();
