@@ -17,6 +17,8 @@ bool hasStrTime1 = false;
 char strDate1[10];
 bool hasStrDate1 = false;
 
+long long int date1 = 0;
+
 // Ввод второго времени
 char strTime2[8];
 bool hasStrTime2 = false;
@@ -25,15 +27,22 @@ bool hasStrTime2 = false;
 char strDate2[10];
 bool hasStrDate2 = false;
 
+long long int date2 = 0;
+
 // Ввод кол-ва дней
 char addDays[5];
 bool hasAddDays = false;
+
+long long addDaysInSecond = 0;
 
 // Ввод времени
 char addTime[8];
 bool hasAddTime = false;
 
+long long int addTimeInSeconds = 0;
+
 int startDate[3] = {1,1,1930};
+int startTime[3] = {0,0,0};
 
 // Function for printing menu
 void printMenu(){
@@ -79,7 +88,7 @@ void printMenu(){
 // Parse time in string format to array
 int *timeStrParser(char strData[8]){ // 23:59:27
     static int valueTime[3] = {0,0,0};
-    char substr[4];
+    char substr[2];
 
     for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
         strncpy(substr, strData+i, 2);
@@ -106,30 +115,7 @@ int *dateStrParser(char strData[10]){ // 01.01.2020
     return valueData;
 }
 
-// it could have been universal parser but i am stupid :(
-// int Parser(char strData[10]){
-//     static int resValues[3] = {0,0,0};
-//     char substr[4] = "";
-//     for(int i = 0, j = 0; i < strlen(strData), j < 3; i++){
-//         if(isdigit(strData[i])){
-//             strcpy(substr, strData[i]);
-//         }else{
-//             resValues[j] = atoi(substr);
-//             strcpy(substr, "");
-//             j++;
-//         }
-//     }
-// }
-
-// Get value from data arrya
-// int GetYear(char strData[10]);
-// int GetMonth(char strData[10]);
-// int GetDay(char strData[10]);
-
 bool visokosYear(int year){
-    // int *date = dateStrParser(strDate);
-    // int year =date[0];
-    
     bool res;
 
     if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0){
@@ -143,9 +129,7 @@ bool visokosYear(int year){
 }
 
 int valDayInMonth(int year, int month){
-    // int *date = dateStrParser(strDate);
     bool vis = visokosYear(year);
-    // int month = date[1];
 
     int res;
 
@@ -170,25 +154,69 @@ int valDayInMonth(int year, int month){
     return res;
 }
 
-int totalDays(char strData[10]){
-    int totalDays = 0;
+unsigned long long int codeDateTimeToSeconds(char strData[10], char strTime[8]){
+    unsigned long long int totalSeconds = 0;
     int *date = dateStrParser(strData);
+    int *time = timeStrParser(strTime);
 
     for(int i = startDate[2]; i < date[2]; ++i){
         if(visokosYear(i)){
-            totalDays += 366;
+            totalSeconds += 366;
         }else{
-            totalDays += 365;
+            totalSeconds += 365;
         }
     }
 
     for(int i = 1; i < date[1]; ++i){
-        totalDays += valDayInMonth(date[2], i);
+        totalSeconds += (unsigned long long int)valDayInMonth(date[2], i);
     }
 
-    totalDays += date[0] - 1;
+    totalSeconds += (unsigned long long int)(date[0] - 1);
+    totalSeconds *= 86400;
+    
+    totalSeconds += (unsigned long long int)(time[0]*60*60+time[1]*60 + time[2]);
 
-    return totalDays;
+    return totalSeconds;
+}
+
+int *decodeDateTimeFromSeconds(unsigned long long int totalSeconds){
+    
+    int totalDays = 0, hours = 0, minutes = 0, seconds = 0;
+
+    while(totalSeconds >= 86400){
+        totalSeconds -= 86400;
+        totalDays++;
+    }
+
+    while(totalSeconds >= 3600){
+        totalSeconds -= 3600;
+        hours++;
+    }
+
+    while(totalSeconds >= 60){
+        totalSeconds -= 60;
+        minutes++;
+    }
+
+    seconds = totalSeconds;
+
+    // Second step: decode total days to year,month,day
+    int year = startDate[2];
+    int month = 1;
+    int day = 1;
+
+    day += totalDays;
+    while(day > valDayInMonth(year, month)){
+        day -= valDayInMonth(year, month);
+        month += 1;
+        if(month > 12){
+            year += 1;
+            month = 1;
+        }
+    }
+
+    int DateTime[6] = {hours,minutes,seconds,day,month,year};
+    return DateTime;
 }
 
 void doSomething(int doing){
