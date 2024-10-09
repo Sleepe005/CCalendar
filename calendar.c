@@ -11,21 +11,21 @@ int cursePos = 0;
 int maxCursePos = 8;
 
 // Воод 1-ого времени
-char strTime1[8];
+char strTime1[9];
 bool hasStrTime1 = false;
 
 // Ввод 1-ой даты
-char strDate1[10];
+char strDate1[11];
 bool hasStrDate1 = false;
 
 unsigned long long int date1 = 0;
 
 // Ввод второго времени
-char strTime2[8];
+char strTime2[9];
 bool hasStrTime2 = false;
 
 // Ввод второй даты
-char strDate2[10];
+char strDate2[11];
 bool hasStrDate2 = false;
 
 unsigned long long int date2 = 0;
@@ -37,7 +37,7 @@ bool hasAddDays = false;
 unsigned long long addDaysInSecond = 0;
 
 // Ввод времени
-char addTime[8];
+char addTime[9];
 bool hasAddTime = false;
 
 unsigned long long int addTimeInSeconds = 0;
@@ -92,8 +92,8 @@ void printMenu(){
 }
 
 // Parse time in string format to array
-void timeStrParser(char strData[8], int *valueTime){ // 23:59:27
-    char substr[2] = "";
+void timeStrParser(char strData[9], int *valueTime){ // 23:59:27
+    char substr[3] = "";
 
     for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
         strncpy(substr, strData+i, 2);
@@ -102,8 +102,8 @@ void timeStrParser(char strData[8], int *valueTime){ // 23:59:27
 }
 
 // Parse date in string format to array
-void dateStrParser(char strData[10], int *valueData){ // 01.01.2020
-    char substr[4] = "";
+void dateStrParser(char strData[11], int *valueData){ // 01.01.2020
+    char substr[5] = "";
 
     for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
         if(j == 2){
@@ -157,7 +157,7 @@ int valDayInMonth(int year, int month){
 }
 
 // Coder for date in seconds
-unsigned long long int codeDateTimeToSeconds(char strData[10], char strTime[8]){
+unsigned long long int codeDateTimeToSeconds(char strData[11], char strTime[9]){
     unsigned long long int totalSeconds = 0;
 
     int date[3] = {0,0,0};
@@ -240,7 +240,7 @@ void doSomething(int doing){
     case 0:
         clear();
         printw("Введите первое время: ");
-        scanw("%s", &strTime1);
+        scanw("%s", strTime1);
         // TODO: Ввод
         hasStrTime1 = true;
         break;
@@ -248,7 +248,7 @@ void doSomething(int doing){
     case 1:
         clear();
         printw("Введите первую дату время: ");
-        scanw("%s", &strDate1);
+        scanw("%s", strDate1);
         // TODO: Ввод
         hasStrDate1 = true;
         break;
@@ -256,7 +256,7 @@ void doSomething(int doing){
     case 2:
         clear();
         printw("Введите второе время: ");
-        scanw("%s", &strTime2);
+        scanw("%s", strTime2);
         // TODO: Ввод
         hasStrTime2 = true;
         break;
@@ -264,7 +264,7 @@ void doSomething(int doing){
     case 3:
         clear();
         printw("Введите вторую дату: ");
-        scanw("%s", &strDate2);
+        scanw("%s", strDate2);
         // TODO: Ввод
         hasStrDate2 = true;
         break;
@@ -285,8 +285,17 @@ void doSomething(int doing){
                 totalDays = decodeDateTimeFromSeconds(difSecons, dateTime, strDate1);
             }
 
-            printw("Между этими датами %d дней %d часов %d минут %d секунд", totalDays, dateTime[0], dateTime[1], dateTime[2]);
+            printw("%s %s\n", strDate1, strTime1);
+            printw("%s %s\n", strDate2, strTime2);
+            printw("Между датами %d дней %d часов %d минут %d секунд\n", totalDays, dateTime[0], dateTime[1], dateTime[2]);
+            
+        }else{
+            printw("Некоторые данные не были введены\n");
         }
+
+        printw("\nДля выхода в меню нажмите на любую клавишу :)\n");
+        getch();
+        break;
 
 
     case 5:
@@ -297,12 +306,52 @@ void doSomething(int doing){
         hasAddDays = true;
         break;
     
+    case 6:
+        clear();
+        if(hasAddDays && hasStrDate1){
+            unsigned long long int totalSec1 = codeDateTimeToSeconds(strDate1, strTime1);
+            unsigned long long int totalSecAdd = atoi(addDays)*24*3600;
+
+            int dateTimeAdd[6];
+            unsigned long long int totalSecRes = totalSec1 + totalSecAdd;
+            decodeDateTimeFromSeconds(totalSecRes, dateTimeAdd, startDate);
+
+            printw("Первая дата: %s\n", strDate1);
+            printw("Новая дата: %d.%d.%d\n", dateTimeAdd[5], dateTimeAdd[4], dateTimeAdd[3]);
+        }else{
+            printw("Некоторые данные не были введены\n");
+        }
+
+        printw("\nДля выхода в меню нажмите на любую клавишу :)\n");
+        getch();
+        break;
+    
     case 7:
         clear();
         printw("Введите время: ");
         scanw("%s", &addTime);
         // TODO: Ввод
         hasAddTime = true;
+        break;
+    
+    case 8:
+        clear();
+        if(hasAddTime && hasStrTime1){
+            unsigned long long int totalSec1 = codeDateTimeToSeconds("01.01.1930", strTime1);
+            unsigned long long int totalSecAdd = codeDateTimeToSeconds("01.01.1930", addTime);
+
+            int dateTimeAdd[6];
+            unsigned long long int totalSecRes = totalSec1 + totalSecAdd;
+            decodeDateTimeFromSeconds(totalSecRes, dateTimeAdd, startDate);
+
+            printw("Первое время: %s\n", strTime1);
+            printw("Новое время: %d.%d.%d\n", dateTimeAdd[0], dateTimeAdd[1], dateTimeAdd[2]);
+        }else{
+            printw("Некоторые данные не были введены\n");
+        }
+
+        printw("\nДля выхода в меню нажмите на любую клавишу :)\n");
+        getch();
         break;
 
     default:
@@ -360,16 +409,19 @@ int main(){
             doSomething(cursePos);
         }else if(key == 53){
             cursePos = 4;
+            doSomething(cursePos);
         }else if(key == 54){
             cursePos = 5;
             doSomething(cursePos);
         }else if(key == 55){
             cursePos = 6;
+            doSomething(cursePos);
         }else if(key == 56){
             cursePos = 7;
             doSomething(cursePos);
         }else if(key == 57){
             cursePos = 8;
+            doSomething(8);
         }
 
         clear();
