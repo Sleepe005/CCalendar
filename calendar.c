@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 // Globals variables
 int cursePos = 0;
@@ -17,7 +18,7 @@ bool hasStrTime1 = false;
 char strDate1[10];
 bool hasStrDate1 = false;
 
-long long int date1 = 0;
+unsigned long long int date1 = 0;
 
 // Ввод второго времени
 char strTime2[8];
@@ -27,19 +28,24 @@ bool hasStrTime2 = false;
 char strDate2[10];
 bool hasStrDate2 = false;
 
-long long int date2 = 0;
+unsigned long long int date2 = 0;
 
 // Ввод кол-ва дней
 char addDays[5];
 bool hasAddDays = false;
 
-long long addDaysInSecond = 0;
+unsigned long long addDaysInSecond = 0;
 
 // Ввод времени
 char addTime[8];
 bool hasAddTime = false;
 
-long long int addTimeInSeconds = 0;
+unsigned long long int addTimeInSeconds = 0;
+
+// Result 5
+unsigned long long int totalSecondsRes5 = 0;
+bool hasRes5 = false;
+int res5[5];
 
 int startDate[3] = {1,1,1930};
 int startTime[3] = {0,0,0};
@@ -86,22 +92,18 @@ void printMenu(){
 }
 
 // Parse time in string format to array
-int *timeStrParser(char strData[8]){ // 23:59:27
-    static int valueTime[3] = {0,0,0};
-    char substr[2];
+void timeStrParser(char strData[8], int *valueTime){ // 23:59:27
+    char substr[2] = "";
 
     for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
         strncpy(substr, strData+i, 2);
         valueTime[j] = atoi(substr);
     }
-
-    return valueTime;
 }
 
 // Parse date in string format to array
-int *dateStrParser(char strData[10]){ // 01.01.2020
-    static int valueData[3] = {0,0,0};
-    char substr[4];
+void dateStrParser(char strData[10], int *valueData){ // 01.01.2020
+    char substr[4] = "";
 
     for(int i = 0, j = 0; i < 8, j < 3; i += 3, j++){
         if(j == 2){
@@ -111,10 +113,9 @@ int *dateStrParser(char strData[10]){ // 01.01.2020
         }
         valueData[j] = atoi(substr);
     }
-
-    return valueData;
 }
 
+// Function witch define visokos year
 bool visokosYear(int year){
     bool res;
 
@@ -128,6 +129,7 @@ bool visokosYear(int year){
     return res;
 }
 
+// Fuction witch cout day in month
 int valDayInMonth(int year, int month){
     bool vis = visokosYear(year);
 
@@ -154,10 +156,15 @@ int valDayInMonth(int year, int month){
     return res;
 }
 
+// Coder for date in seconds
 unsigned long long int codeDateTimeToSeconds(char strData[10], char strTime[8]){
     unsigned long long int totalSeconds = 0;
-    int *date = dateStrParser(strData);
-    int *time = timeStrParser(strTime);
+
+    int date[3] = {0,0,0};
+    dateStrParser(strData, date);
+
+    int time[3] = {0,0,0};
+    timeStrParser(strTime, time);
 
     for(int i = startDate[2]; i < date[2]; ++i){
         if(visokosYear(i)){
@@ -179,7 +186,8 @@ unsigned long long int codeDateTimeToSeconds(char strData[10], char strTime[8]){
     return totalSeconds;
 }
 
-int *decodeDateTimeFromSeconds(unsigned long long int totalSeconds){
+// Decoder seconds to the date
+int decodeDateTimeFromSeconds(unsigned long long int totalSeconds, int *dateTime, int startDate[3]){
     
     int totalDays = 0, hours = 0, minutes = 0, seconds = 0;
 
@@ -200,6 +208,10 @@ int *decodeDateTimeFromSeconds(unsigned long long int totalSeconds){
 
     seconds = totalSeconds;
 
+    dateTime[0] = hours;
+    dateTime[1] = minutes;
+    dateTime[2] = seconds;
+
     // Second step: decode total days to year,month,day
     int year = startDate[2];
     int month = 1;
@@ -215,10 +227,13 @@ int *decodeDateTimeFromSeconds(unsigned long long int totalSeconds){
         }
     }
 
-    int DateTime[6] = {hours,minutes,seconds,day,month,year};
-    return DateTime;
-}
+    dateTime[3] = year;
+    dateTime[4] = month;
+    dateTime[5]=  day;
 
+    return totalDays;
+}
+// Do something
 void doSomething(int doing){
     switch (doing)
     {
@@ -253,6 +268,26 @@ void doSomething(int doing){
         // TODO: Ввод
         hasStrDate2 = true;
         break;
+    
+    case 4:
+        clear();
+        if(hasStrDate1 && hasStrTime1 && hasStrDate2 && hasStrTime2){
+            unsigned long long int totalSeconds1 = codeDateTimeToSeconds(strDate1, strTime1);
+            unsigned long long int totalSeconds2 = codeDateTimeToSeconds(strDate2, strTime2);
+
+            int totalDays = 0;
+            int dateTime[6] = {0,0,0,0,0,0};
+            if(totalSeconds1 > totalSeconds2){
+                unsigned long long int difSeconds = totalSeconds1 - totalSeconds2;
+                totalDays = decodeDateTimeFromSeconds(difSeconds, dateTime, strDate2);
+            }else{
+                unsigned long long int difSecons = totalSeconds2 - totalSeconds1;
+                totalDays = decodeDateTimeFromSeconds(difSecons, dateTime, strDate1);
+            }
+
+            printw("Между этими датами %d дней %d часов %d минут %d секунд", totalDays, dateTime[0], dateTime[1], dateTime[2]);
+        }
+
 
     case 5:
         clear();
