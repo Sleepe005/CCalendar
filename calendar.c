@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <unistd.h>
 
 // Globals variables
 int cursePos = 0;
@@ -89,6 +90,22 @@ void printMenu(){
         }
         printw("\n");
     }
+}
+
+bool isSample(char strData[10]){
+    bool allDigIsDig = true;
+    bool hasSep = true; // __.__.____
+
+    for(int i = 0; i < strlen(strData); ++i){
+        if(i == 2 || i == 5){
+            if(!ispunct(strData[i])){
+                hasSep = false;
+            }
+        }else if(!isdigit(strData[i]))
+            allDigIsDig = false;
+        }
+
+    return allDigIsDig && hasSep;
 }
 
 // Parse time in string format to array
@@ -233,40 +250,112 @@ int decodeDateTimeFromSeconds(unsigned long long int totalSeconds, int *dateTime
 
     return totalDays;
 }
+
 // Do something
 void doSomething(int doing){
     switch (doing)
     {
     case 0:
         clear();
-        printw("Введите первое время: ");
+        printw("Введите первое время (ЧЧ:ММ:СС): ");
         scanw("%s", strTime1);
-        // TODO: Ввод
-        hasStrTime1 = true;
+
+        if(!isSample(strTime1)){
+            printf("\nНеверный формат времени :(\n");
+            strcpy(strTime1,"");
+            printf("\nНажмите любую клавишу для выхода в меню :(\n");
+            getch();
+
+        }else{
+            int time[3] = {0, 0, 0};
+            timeStrParser(strTime1, time);
+            if(time[0] >= 0 && time[0] <= 23 && time[1] >= 0 && time[1] <= 59 && time[2] >= 0 && time[2] <= 59){
+                hasStrTime1 = true;
+            }else{
+                printf("\nНеверный формат времени :(\n");
+                strcpy(strTime1,"");
+                printf("\nНажмите любую клавишу для выхода в меню :(\n");
+                getch();
+            }
+        }
+        
         break;
     
     case 1:
         clear();
-        printw("Введите первую дату время: ");
+        printw("Введите первую дату (ДД:ММ:ГГГГ): ");
         scanw("%s", strDate1);
-        // TODO: Ввод
-        hasStrDate1 = true;
+        
+        if(!isSample(strDate1)){
+            printf("\nНеверный формат даты :(\n");
+            strcpy(strDate1,"");
+            printf("\nНажмите любую клавишу для выхода в меню :(\n");
+            getch();
+
+        }else{
+            int time[3] = {0, 0, 0};
+            dateStrParser(strDate1, time);
+            if(time[0] >= 0 && time[0] <= valDayInMonth(time[2], time[1]) && time[1] >= 0 && time[1] <= 12 && time[2] >= 1930){
+                hasStrDate1 = true;
+            }else{
+                printf("\nНеверный формат времени :(\n");
+                strcpy(strDate1,"");
+                printf("\nНажмите любую клавишу для выхода в меню :(\n");
+                getch();
+            }
+        }
+
         break;
     
     case 2:
         clear();
-        printw("Введите второе время: ");
+        printw("Введите второе время (ЧЧ:ММ:СС): ");
         scanw("%s", strTime2);
-        // TODO: Ввод
-        hasStrTime2 = true;
+
+        if(!isSample(strTime2)){
+            printf("\nНеверный формат времени :(\n");
+            strcpy(strTime2,"");
+            printf("\nНажмите любую клавишу для выхода в меню :(\n");
+            getch();
+
+        }else{
+            int time[3] = {0, 0, 0};
+            timeStrParser(strTime2, time);
+            if(time[0] >= 0 && time[0] <= 23 && time[1] >= 0 && time[1] <= 59 && time[2] >= 0 && time[2] <= 59){
+                hasStrTime2 = true;
+            }else{
+                printf("\nНеверный формат времени :(\n");
+                strcpy(strTime2,"");
+                printf("\nНажмите любую клавишу для выхода в меню :(\n");
+                getch();
+            }
+        }
+
         break;
     
     case 3:
         clear();
-        printw("Введите вторую дату: ");
+        printw("Введите вторую дату (ДД:ММ:ГГГГ): ");
         scanw("%s", strDate2);
-        // TODO: Ввод
-        hasStrDate2 = true;
+
+        if(!isSample(strDate2)){
+            printf("\nНеверный формат даты :(\n");
+            strcpy(strDate2,"");
+            printf("\nНажмите любую клавишу для выхода в меню :(\n");
+            getch();
+        }else{
+            int time[3] = {0, 0, 0};
+            dateStrParser(strDate2, time);
+            if(time[0] >= 0 && time[0] <= valDayInMonth(time[2], time[1]) && time[1] >= 0 && time[1] <= 12 && time[2] >= 1930){
+                hasStrDate2 = true;
+            }else{
+                printf("\nНеверный формат времени :(\n");
+                strcpy(strDate2,"");
+                printf("\nНажмите любую клавишу для выхода в меню :(\n");
+                getch();
+            }
+        }
+
         break;
     
     case 4:
