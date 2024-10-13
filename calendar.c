@@ -15,8 +15,9 @@ char strTime1[10] = "00:00:00";
 bool hasStrTime1 = false;
 
 // Ввод 1-ой даты
-char strDate1[12] = "01.01.1930";
+char strDate1[12] = "01.01.1934";
 bool hasStrDate1 = false;
+char weekDay1[50] = "Понедельник";
 
 // Дата и время 1
 unsigned long long int date1 = 0;
@@ -26,8 +27,9 @@ char strTime2[10] = "00:00:00";
 bool hasStrTime2 = false;
 
 // Ввод второй даты
-char strDate2[12] = "01.01.1930";
+char strDate2[12] = "01.01.1934";
 bool hasStrDate2 = false;
+char weekDay2[50] = "Понедельник";
 
 // Дата и время 2
 unsigned long long int date2 = 0;
@@ -47,7 +49,7 @@ bool hasRes5 = false;
 int res5[5];
 
 // Default value
-int startDate[3] = {1,1,1930};
+int startDate[3] = {1,1,1934};
 int startTime[3] = {0,0,0};
 
 // Parse data
@@ -141,9 +143,10 @@ unsigned long long int codeDateTimeToSeconds(char strData[12], char strTime[10])
 }
 
 // Decoder seconds to the date
-int decodeDateTimeFromSeconds(unsigned long long int totalSeconds, int *dateTime, int startDate[3]){
+unsigned long long int decodeDateTimeFromSeconds(unsigned long long int totalSeconds, int *dateTime, int startDate[3]){
     
-    int totalDays = 0, hours = 0, minutes = 0, seconds = 0;
+    unsigned long long int totalDays = 0;
+    int hours = 0, minutes = 0, seconds = 0;
 
     while(totalSeconds >= 86400){
         totalSeconds -= 86400;
@@ -203,13 +206,56 @@ bool isSample(char strData[12]){
     return allDigIsDig && hasSep;
 }
 
+int changeWeekDay(int vals[6], char *weekDay){
+    int year = vals[3], month = vals[4], day = vals[5];
+    if(month == 1 || month == 2){
+        year--;
+        month += 10;
+    }else{
+        month-=2;
+    }
+
+    int A = (day + ((31*month)/12) + year + (year/4) - (year/100) + (year/400));
+    switch (A%7)
+    {
+    case 1:
+        strcpy(weekDay, "Понедельник");
+        break;
+    case 2:
+        strcpy(weekDay, "Вторник");
+        break;
+    case 3:
+        strcpy(weekDay, "Среда");
+        break;
+    case 4:
+        strcpy(weekDay, "Четверг");
+        break;
+    case 5:
+        strcpy(weekDay, "Пятница");
+        break;
+    case 6:
+        strcpy(weekDay, "Суббота");
+        break;
+    case 0:
+        strcpy(weekDay, "Воскресенье");
+        break;
+    
+    default:
+        break;
+    }
+}
+
 // Do something
 void doSomething(int doing){
     switch (doing)
     {
+    char oldVal[12];
+
     case 0:
         clear();
         printw("Введите первое время (ЧЧ:ММ:СС): ");
+        // char oldVal[10];
+        strcpy(oldVal, strTime1);
         scanw("%s", strTime1);
 
         hasStrTime1 = true;
@@ -220,7 +266,8 @@ void doSomething(int doing){
             printf("\nНажмите любую клавишу для выхода в меню :(\n");
             getch();
         }else{
-            date1 += codeDateTimeToSeconds("01.01.1930", strTime1);
+            date1 -= codeDateTimeToSeconds("01.01.1934", oldVal);
+            date1 += codeDateTimeToSeconds("01.01.1934", strTime1);
         }
 
         break;
@@ -228,6 +275,8 @@ void doSomething(int doing){
     case 1:
         clear();
         printw("Введите первую дату (ДД:ММ:ГГГГ): ");
+        // char oldVal[12];
+        strcpy(oldVal, strDate1);
         scanw("%s", strDate1);
         
         hasStrDate1 = true;
@@ -238,6 +287,7 @@ void doSomething(int doing){
             printf("\nНажмите любую клавишу для выхода в меню :(\n");
             getch();
         }else{
+            date1 -= codeDateTimeToSeconds(oldVal, "00:00:00");
             date1 += codeDateTimeToSeconds(strDate1, "00:00:00");
         }
 
@@ -246,6 +296,8 @@ void doSomething(int doing){
     case 2:
         clear();
         printw("Введите второе время (ЧЧ:ММ:СС): ");
+        // char oldVal[10];
+        strcpy(oldVal, strTime2);
         scanw("%s", strTime2);
 
         hasStrTime2 = true;
@@ -256,7 +308,8 @@ void doSomething(int doing){
             printf("\nНажмите любую клавишу для выхода в меню :(\n");
             getch();
         }else{
-            date2 += codeDateTimeToSeconds("01.01.1930", strTime2);
+            date2 -= codeDateTimeToSeconds("01.01.1934", oldVal);
+            date2 += codeDateTimeToSeconds("01.01.1934", strTime2);
         }
 
         break;
@@ -264,6 +317,8 @@ void doSomething(int doing){
     case 3:
         clear();
         printw("Введите вторую дату (ДД:ММ:ГГГГ): ");
+        // char oldVal[10];
+        strcpy(oldVal, strDate2);
         scanw("%s", strDate2);
 
         hasStrDate2 = true;
@@ -274,7 +329,8 @@ void doSomething(int doing){
             printf("\nНажмите любую клавишу для выхода в меню :(\n");
             getch();
         }else{
-            date1 += codeDateTimeToSeconds(strDate2, "00:00:00");
+            date2 -= codeDateTimeToSeconds(oldVal, "00:00:00");
+            date2 += codeDateTimeToSeconds(strDate2, "00:00:00");
         }
         break;
     
@@ -294,8 +350,8 @@ void doSomething(int doing){
                 totalDays = decodeDateTimeFromSeconds(difSecons, dateTime, strDate1);
             }
 
-            printw("%s %s\n", strDate1, strTime1);
-            printw("%s %s\n", strDate2, strTime2);
+            printw("%s %s %s\n", strDate1, strTime1, weekDay1);
+            printw("%s %s %s\n", strDate2, strTime2, weekDay2);
             printw("Между датами %d дней %d часов %d минут %d секунд\n", totalDays, dateTime[0], dateTime[1], dateTime[2]);
             
         }else{
@@ -332,12 +388,14 @@ void doSomething(int doing){
             int dateTimeAdd[6] = {0,0,0,0,0,0};
             unsigned long long int totalSecRes = totalSec1 + totalSecAdd;
             decodeDateTimeFromSeconds(totalSecRes, dateTimeAdd, startDate);
+            char wd[50];
+            changeWeekDay(dateTimeAdd, wd);
 
             int d1[6]  = {0,0,0,0,0,0};
             decodeDateTimeFromSeconds(totalSec1, d1, startDate);
 
-            printw("Первая дата: %02d.%02d.%d\n", d1[5], d1[4], d1[3]);
-            printw("Новая дата: %02d.%02d.%d\n", dateTimeAdd[5], dateTimeAdd[4], dateTimeAdd[3]);
+            printw("Первая дата: %02d.%02d.%d %s\n", d1[5], d1[4], d1[3], weekDay1);
+            printw("Новая дата: %02d.%02d.%d %s\n", dateTimeAdd[5], dateTimeAdd[4], dateTimeAdd[3], wd);
         }else{
             printw("Некоторые данные не были введены\n");
         }
@@ -359,7 +417,7 @@ void doSomething(int doing){
             printf("\nНажмите любую клавишу для выхода в меню :(\n");
             getch();
         }else{
-            addTimeSec += codeDateTimeToSeconds("01.01.1930", addTime);
+            addTimeSec += codeDateTimeToSeconds("01.01.1934", addTime);
         }
 
         break;
@@ -367,8 +425,8 @@ void doSomething(int doing){
     case 8:
         clear();
         if(hasAddTime && hasStrTime1){
-            unsigned long long int totalSec1 = codeDateTimeToSeconds("01.01.1930", strTime1);
-            unsigned long long int totalSecAdd = codeDateTimeToSeconds("01.01.1930", addTime);
+            unsigned long long int totalSec1 = codeDateTimeToSeconds("01.01.1934", strTime1);
+            unsigned long long int totalSecAdd = codeDateTimeToSeconds("01.01.1934", addTime);
 
             int dateTimeAdd[6];
             unsigned long long int totalSecRes = totalSec1 + totalSecAdd;
@@ -408,10 +466,12 @@ void printMenu(){
         };
 
     int valDate1[6] = {0,0,0,0,0,0};
-    decodeDateTimeFromSeconds(date1, valDate1, startDate);
+    unsigned long long int dates1 = decodeDateTimeFromSeconds(date1, valDate1, startDate);
+    changeWeekDay(valDate1, weekDay1);
 
     int valDate2[6] = {0,0,0,0,0,0};
-    decodeDateTimeFromSeconds(date2, valDate2, startDate);
+    unsigned long long int dates2 = decodeDateTimeFromSeconds(date2, valDate2, startDate);
+    changeWeekDay(valDate2, weekDay2);
 
     for(int i = 0; i < 9; ++i){
         printw("%s", menu[i]);
@@ -419,13 +479,13 @@ void printMenu(){
             printw(": %02d:%02d:%02d", valDate1[0], valDate1[1], valDate1[2]);
         }
         if(hasStrDate1 && i == 1){
-            printw(": %02d.%02d.%d", valDate1[5], valDate1[4], valDate1[3]);
+            printw(": %02d.%02d.%d %s", valDate1[5], valDate1[4], valDate1[3], weekDay1);
         }
         if(hasStrTime2 && i == 2){
             printw(": %02d:%02d:%02d", valDate2[0], valDate2[1], valDate2[2]);
         }
         if(hasStrDate2 && i == 3){
-            printw(": %02d.%02d.%d", valDate2[5], valDate2[4], valDate2[3]);
+            printw(": %02d.%02d.%d %s", valDate2[5], valDate2[4], valDate2[3], weekDay2);
         }
         if(hasAddDays && i == 5){
             printw(": %s", addDays);
